@@ -10,13 +10,15 @@ namespace Term2DGame
             Term2D.Start(new TrailDemoGame());
         }
 
-        override public void Init(Canvas canvas)
+        public override void Init(Canvas canvas)
         {
             Console.Title = "Trail Demo";
             canvas.DefaultBackgroundColor = ConsoleColor.Gray;
             canvas.Clear();
         }
-
+        
+        // Whether To Continue Game Loop
+        bool running = true;
         // Timer, Used For Consistent Motion Intervals
         double timer = 0.0;
         // Position Of Block
@@ -29,29 +31,9 @@ namespace Term2DGame
         Random random = new Random();
         string[] colorNames = Enum.GetNames(typeof(ConsoleColor));
         ConsoleColor blockColor = ConsoleColor.Red;
-        override public bool Update(UpdateInfo updateInfo)
+        public override bool Update(UpdateInfo updateInfo)
         {
-            // Input
-            if (updateInfo.HasUnreadInput)
-            {
-                switch (updateInfo.LastInput)
-                {
-                    case ConsoleKey.UpArrow:
-                        moveUp = true;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        moveUp = false;
-                        break;
-                    case ConsoleKey.RightArrow:
-                        moveRight = true;
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        moveRight = false;
-                        break;
-                    case ConsoleKey.Escape:
-                        return false;
-                }
-            }
+            
             // Render
             Canvas canvas = updateInfo.ActiveCanvas;
             // canvas.Clear(); - Enable To Clear Trails
@@ -64,7 +46,7 @@ namespace Term2DGame
                 // Keep Moving Right / Left
                 if (moveRight)
                 {
-                    if (colPos < canvas.GetWidth() - 1)
+                    if (colPos < canvas.Width - 1)
                     {
                         colPos++;
                     }
@@ -101,7 +83,7 @@ namespace Term2DGame
                 }
                 else
                 {
-                    if (rowPos < canvas.GetHeight() - 1)
+                    if (rowPos < canvas.Height - 1)
                     {
                         rowPos++;
                     }
@@ -116,7 +98,29 @@ namespace Term2DGame
                 timer = 0.0;
             }
             canvas.Draw(rowPos, colPos, '█', blockColor, ConsoleColor.Gray);
-            return true;
+            return running;
+        }
+
+        public override void OnKeyEvent(ConsoleKeyInfo keyInfo)
+        {
+            switch (keyInfo.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    moveUp = true;
+                    break;
+                case ConsoleKey.DownArrow:
+                    moveUp = false;
+                    break;
+                case ConsoleKey.RightArrow:
+                    moveRight = true;
+                    break;
+                case ConsoleKey.LeftArrow:
+                    moveRight = false;
+                    break;
+                case ConsoleKey.Escape:
+                    running = false;
+                    break;
+            }
         }
     }
 }
